@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinn FF Panel</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top, #263a70, transparent 45%),
+        #080b14;
+    color: white;
+}
+
+.container {
+    width: 92%;
+    max-width: 480px;
+    margin: auto;
+    padding: 25px 0;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.logo {
+    width: 90px;
+    height: 90px;
+    margin: auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff3b3b, #ff8a00);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    box-shadow: 0 0 30px rgba(255,80,0,.5);
+}
+
+h1 {
+    margin: 15px 0 5px;
+}
+
+.subtitle {
+    color: #aeb7d0;
+}
+
+.card {
+    background: rgba(20,25,40,.92);
+    border: 1px solid #303952;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.25);
+}
+
+.card h2 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+label {
+    display: block;
+    margin: 12px 0 6px;
+    color: #c9d0e5;
+}
+
+input[type="range"] {
+    width: 100%;
+}
+
+.value {
+    float: right;
+    color: #ff8a00;
+    font-weight: bold;
+}
+
+button {
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 10px;
+    background: linear-gradient(90deg, #ff3b3b, #ff8a00);
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+button:active {
+    transform: scale(.98);
+}
+
+.preset {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.preset button {
+    margin: 0;
+    background: #252d46;
+}
+
+.status {
+    text-align: center;
+    color: #70e58b;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.warning {
+    color: #aeb7d0;
+    font-size: 12px;
+    line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <div class="logo">🐉</div>
+        <h1>VINN FF PANEL</h1>
+        <div class="subtitle">Gaming Settings Assistant</div>
+    </div>
+
+    <div class="card">
+        <h2>🎯 Sensitivitas</h2>
+
+        <label>
+            General
+            <span class="value" id="generalValue">90</span>
+        </label>
+        <input id="general" type="range" min="0" max="200" value="90">
+
+        <label>
+            Red Dot
+            <span class="value" id="redDotValue">85</span>
+        </label>
+        <input id="redDot" type="range" min="0" max="200" value="85">
+
+        <label>
+            2x Scope
+            <span class="value" id="scope2Value">80</span>
+        </label>
+        <input id="scope2" type="range" min="0" max="200" value="80">
+
+        <label>
+            4x Scope
+            <span class="value" id="scope4Value">75</span>
+        </label>
+        <input id="scope4" type="range" min="0" max="200" value="75">
+
+        <button onclick="saveSettings()">💾 Simpan Setting</button>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <div class="card">
+        <h2>⚡ Preset</h2>
+
+        <div class="preset">
+            <button onclick="preset('balanced')">Balanced</button>
+            <button onclick="preset('fast')">Fast Aim</button>
+            <button onclick="preset('low')">Low Sens</button>
+            <button onclick="preset('custom')">Custom</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🕹️ HUD</h2>
+
+        <button onclick="showHUD('2 jari')">
+            HUD 2 Jari
+        </button>
+
+        <button onclick="showHUD('3 jari')">
+            HUD 3 Jari
+        </button>
+
+        <div class="status" id="hudStatus"></div>
+    </div>
+
+    <div class="card">
+        <h2>📱 Profil Perangkat</h2>
+
+        <button onclick="deviceInfo()">
+            Cek Perangkat
+        </button>
+
+        <div class="status" id="deviceStatus"></div>
+    </div>
+
+    <div class="card">
+        <h2>ℹ️ Tentang</h2>
+
+        <p class="warning">
+            Vinn FF Panel adalah aplikasi pendamping untuk menyimpan
+            dan mengatur preferensi kontrol permainan. Aplikasi ini
+            tidak melakukan injeksi, modifikasi file game, bypass
+            anti-cheat, atau perubahan terhadap proses Free Fire.
+        </p>
+    </div>
+
+</div>
+
+<script>
+
+const ids = ["general", "redDot", "scope2", "scope4"];
+
+ids.forEach(id => {
+
+    const input = document.getElementById(id);
+    const output = document.getElementById(id + "Value");
+
+    input.addEventListener("input", () => {
+        output.textContent = input.value;
+    });
+
+});
+
+function saveSettings() {
+
+    const settings = {
+        general: document.getElementById("general").value,
+        redDot: document.getElementById("redDot").value,
+        scope2: document.getElementById("scope2").value,
+        scope4: document.getElementById("scope4").value
+    };
+
+    localStorage.setItem(
+        "vinnFFSettings",
+        JSON.stringify(settings)
+    );
+
+    document.getElementById("status").textContent =
+        "✓ Setting berhasil disimpan";
+}
+
+function loadSettings() {
+
+    const data = localStorage.getItem("vinnFFSettings");
+
+    if (!data) return;
+
+    const settings = JSON.parse(data);
+
+    ids.forEach(id => {
+
+        if (settings[id] !== undefined) {
+
+            document.getElementById(id).value = settings[id];
+
+            document.getElementById(id + "Value").textContent =
+                settings[id];
+
+        }
+
+    });
+}
+
+function preset(type) {
+
+    let values;
+
+    if (type === "balanced") {
+        values = [90, 85, 80, 75];
+    }
+
+    else if (type === "fast") {
+        values = [120, 110, 100, 90];
+    }
+
+    else if (type === "low") {
+        values = [65, 60, 55, 50];
+    }
+
+    else {
+        values = [90, 85, 80, 75];
+    }
+
+    ids.forEach((id, index) => {
+
+        document.getElementById(id).value = values[index];
+
+        document.getElementById(id + "Value").textContent =
+            values[index];
+
+    });
+
+    document.getElementById("status").textContent =
+        "✓ Preset diterapkan";
+}
+
+function showHUD(type) {
+
+    document.getElementById("hudStatus").textContent =
+        "✓ Preset HUD " + type + " dipilih";
+}
+
+function deviceInfo() {
+
+    const info =
+        navigator.userAgent;
+
+    document.getElementById("deviceStatus").textContent =
+        "Perangkat terdeteksi: " +
+        info.substring(0, 55) + "...";
+}
+
+loadSettings();
+
+</script>
+
+</body>
+</html># Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repository
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
